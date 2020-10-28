@@ -141,8 +141,6 @@ class TestStatTracker < Minitest::Test
     assert_equal expected, @stat_tracker.team_info("18")
     end
 
-    
-
     def test_it_can_return_winningest_coach
   
       assert_equal "Claude Julien", @stat_tracker.winningest_coach("20132014")
@@ -153,18 +151,6 @@ class TestStatTracker < Minitest::Test
   
       assert_equal "Peter Laviolette", @stat_tracker.worst_coach("20132014")
       assert ("Craig MacTavish" || "Ted Nolan"), @stat_tracker.worst_coach("20142015")
-    end
-
-    def test_winningest_coach
-      skip
-      assert_equal "Claude Julien", @stat_tracker.winningest_coach("20132014")
-      assert_equal "Alain Vigneault", @stat_tracker.winningest_coach("20142015")
-    end
-
-    def test_worst_coach
-      skip
-      assert_equal "Peter Laviolette", @stat_tracker.worst_coach("20132014")
-      assert_equal ("Craig MacTavish" || "Ted Nolan"), @stat_tracker.worst_coach("20142015")
     end
 
     def test_most_accurate_team

@@ -132,6 +132,12 @@ class StatTracker
       end
     end
 
+    def game_teams_by_coach
+      @game_teams.group_by do |game|
+        game.head_coach
+      end
+    end
+
     def game_teams_by_away
       @game_teams.group_by do |game|
         game.team_id unless game.hoa == "home"
@@ -266,13 +272,6 @@ class StatTracker
   queried_team
   end
 
-  def game_teams_by_coach
-    @game_teams.group_by do |game|
-      game.head_coach
-    end
-  end
-
-
   def coach_win_percentage
     wins_losses = {}
     game_teams_by_coach.max_by do |coach, games|
@@ -339,34 +338,38 @@ class StatTracker
       return team.teamname if team.team_id == ratio[0]
     end
   end
-    
-  def game_ids_by_season(season_id)
-    season_games = @games.find_all do |game|
-      game.season == season_id
-    end
-    game_ids = season_games.map do |game|
-      game.game_id.to_s
-    end
-  end
 
   def winningest_coach(season_id)
-    game_set = game_ids_by_season(season_id)
+    game_set = season_game_ids[season_id]
     win_rate = {}
+    # require 'pry'; binding.pry
 
     game_teams_by_coach.map do |coach, games|
-      win_rate[coach] = ((games.count {|game| (game.result == "WIN") && game_set.include?(game.game_id)}).to_f / (games.count {|game| game_set.include?(game.game_id)})).round(2)
+      games_won = 0.0
+      games_total = 0.0
+      games.map do |game|
+        games_won += 1 if game.result == "WIN" && game_set.include?(game.game_id)
+        games_total += 1 if game_set.include?(game.game_id)
+      end
+      win_rate[coach] = games_won / games_total
     end
     win_rate.key(win_rate.values.reject{|x| x.nan?}.max)
   end
 
   def worst_coach(season_id)
-    game_set = game_ids_by_season(season_id)
+    game_set = season_game_ids[season_id]
     win_rate = {}
+
     game_teams_by_coach.map do |coach, games|
-      win_rate[coach] = ((games.count {|game| (game.result == "WIN") && game_set.include?(game.game_id)}).to_f / (games.count {|game| game_set.include?(game.game_id)})).round(2)    
+      games_won = 0.0
+      games_total = 0.0
+      games.map do |game|
+        games_won += 1 if game.result == "WIN" && game_set.include?(game.game_id)
+        games_total += 1 if game_set.include?(game.game_id)
+      end
+      win_rate[coach] = games_won / games_total
     end
     win_rate.key(win_rate.values.reject{|x| x.nan?}.min)
-
   end
 
   def most_tackles(season_id)
