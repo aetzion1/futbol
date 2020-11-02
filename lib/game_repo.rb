@@ -167,6 +167,15 @@ class GameRepo
     (wins.to_f / total_game_count).round(2)
   end
 
+  def games_per_season_by_team(team_id)
 
+    games_by_season = Hash.new(0)
+    total_games_per_team = total_games_per_team_away(team_id) + total_games_per_team_home(team_id)
+
+    total_games_per_team.each do |game|
+      games_by_season[game.season] += 1
+    end
+    games_by_season
+  end
 
 end

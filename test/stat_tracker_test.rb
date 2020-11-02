@@ -4,6 +4,9 @@ class TestStatTracker < Minitest::Test
 
   def setup
       # move this into self.from CSV! (below code)
+
+
+
       games_path = './data/games.csv'
       teams_path = './data/teams.csv'
       game_teams_path = './data/game_teams.csv'
@@ -49,17 +52,6 @@ class TestStatTracker < Minitest::Test
       assert_equal 0, @stat_tracker.lowest_total_score
   end
 
-  def test_it_calculates_winner
-    skip
-    home_team = Game.new(2012030221, 20122013, "Postseason", "5/16/13", 3, 6, 2, 3, "Toyota Stadium", "/api/v1/venues/null")
-    away_team = Game.new(2012030221, 20122013, "Postseason", "5/16/13", 3, 6, 3, 2, "Toyota Stadium", "/api/v1/venues/null")
-    tie = Game.new(2012030221, 20122013, "Postseason", "5/16/13", 3, 6, 2, 2, "Toyota Stadium", "/api/v1/venues/null")
-
-    assert_equal :home, @stat_tracker.calculate_winner(home_team)
-    assert_equal :away, @stat_tracker.calculate_winner(away_team)
-    assert_equal :tie, @stat_tracker.calculate_winner(tie)
-
-  end
 
   def test_percentage_home_wins
     # skip

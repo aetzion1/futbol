@@ -130,44 +130,11 @@ class StatTracker
   end
 
   def favorite_opponent(team_id)
-    game_set = @game_teams_repo.game_teams_by_team_id[team_id]
-    team_set = @game_teams_repo.game_teams_by_team
-    win_rate = {}
-
-    team_set.map do |team, games|
-      games_won = 0.0
-      games_total = 0.0
-      games.map do |game|
-        games_won += 1 if game.result == "WIN" && game_set.include?(game.game_id)
-        games_total += 1 if game_set.include?(game.game_id)
-      end
-      win_rate[team] = games_won / games_total
-    end
-    fav = win_rate.key(win_rate.values.min)
-    @teams_repo.all_teams.find do |team|
-      team.team_id == fav
-    end.teamname
+    @game_teams_repo.favorite_opponent(team_id)
   end
 
   def rival(team_id)
-    game_set = @game_teams_repo.game_teams_by_team_id[team_id]
-    team_set = @game_teams_repo.game_teams_by_team
-    win_rate = {}
-    
-    team_set.map do |team, games|
-      games_won = 0.0
-      games_total = 0.0
-      games.map do |game|
-        games_won += 1 if game.result == "WIN" && game_set.include?(game.game_id)
-        games_total += 1 if game_set.include?(game.game_id)
-      end
-      win_rate[team] = games_won / games_total
-    end
-
-    fav = win_rate.key(win_rate.values.max)
-    @teams_repo.all_teams.find do |team|
-      team.team_id == fav
-    end.teamname
+    @game_teams_repo.rival(team_id)
   end
 
 
@@ -205,14 +172,7 @@ class StatTracker
   end
 
   def games_per_season_by_team(team_id)
-
-    games_by_season = Hash.new(0)
-    total_games_per_team = total_games_per_team_away(team_id) + total_games_per_team_home(team_id)
-
-    total_games_per_team.each do |game|
-      games_by_season[game.season] += 1
-    end
-    games_by_season
+    @games_repo.games_per_season_by_team(team_id)
   end
 
   def wins_per_season_by_team(team_id)
