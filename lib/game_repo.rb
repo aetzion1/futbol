@@ -115,5 +115,31 @@ class GameRepo
     average_goals
   end
 
+  def wins_per_season_by_team(team_id)
+    wins_by_season = Hash.new(0)
+
+    total_games_per_team_home(team_id).each do |game|
+      if game.calculate_winner == :home
+        wins_by_season[game.season] += 1
+      end
+    end
+    total_games_per_team_away(team_id).each do |game|
+      if game.calculate_winner == :away
+        wins_by_season[game.season] += 1
+      end
+    end
+    wins_by_season
+  end
+
+  def best_season(team_id)
+    win_percentage = {}
+
+    wins_per_season_by_team(team_id).each do |season, win_number|
+      win_percentage[season] = ((win_number.to_f / ((total_games_per_team_home(team_id).count) + (total_games_per_team_away(team_id).count))) * 100).round(2)
+    end
+    win_percentage.key(win_percentage.values.max)
+  end
+
+
 
 end
