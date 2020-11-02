@@ -64,9 +64,8 @@ class GameTeamsRepo
     win_rate.key(win_rate.values.reject{|x| x.nan?}.min)
   end
 
-  def game_ids_by_season
-    game_id = @stat_tracker.game_ids_by_season(season_id)
-    game_team_by_season(game_id, season_id)
+  def game_ids_by_season(season_id)
+    @stat_tracker.game_team_by_season(season_id)
   end
 
   def game_team_by_season(season_id)
@@ -177,6 +176,31 @@ class GameTeamsRepo
     end
     worst_home = average_goals.key(average_goals.values.min)
     @stat_tracker.team_name(worst_home)
+  end
+
+  def most_tackles(season_id)
+    team_tackles = {}
+    games_by_team_id(season_id).map do |team, games|
+      tackles = 0
+      games.map do |game|
+        tackles += game.tackles
+      end
+      team_tackles[team] = tackles
+    end
+    @stat_tracker.team_name(team_tackles.key(team_tackles.values.max))
+  end
+
+  def fewest_tackles(season_id)
+    team_tackles = {}
+    games_by_team_id(season_id).map do |team, games|
+      tackles = 0
+      games.map do |game|
+        tackles += game.tackles
+      end
+      team_tackles[team] = tackles
+    end
+
+    @stat_tracker.team_name(team_tackles.key(team_tackles.values.min))
   end
 
 end
