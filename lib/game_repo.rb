@@ -149,5 +149,22 @@ class GameRepo
     win_percentage.key(win_percentage.values.min)
   end
 
+  def average_win_percentage(team_id)
+    wins = 0
+    total_game_count = total_games_per_team_away(team_id).count + total_games_per_team_home(team_id).count
+
+    total_games_per_team_home(team_id).each do |game|
+      if game.calculate_winner == :home
+        wins += 1
+      end
+    end
+
+    total_games_per_team_away(team_id).each do |game|
+      if game.calculate_winner == :away
+        wins += 1
+      end
+    end
+    (wins.to_f / total_game_count).round(2)
+  end
 
 end
