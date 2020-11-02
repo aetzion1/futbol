@@ -167,4 +167,6 @@ class GameRepo
     (wins.to_f / total_game_count).round(2)
   end
 
+
+
 end

@@ -203,4 +203,34 @@ class GameTeamsRepo
     @stat_tracker.team_name(team_tackles.key(team_tackles.values.min))
   end
 
+  def most_goals_scored(team_id)
+    goals = 0
+    team_set = game_teams_by_team
+
+    team_set.each do |team, games|
+      if team_id == team
+        goals = games.max_by do |game|
+          game.goals
+        end.goals
+      end
+    end
+
+    goals
+  end
+
+  def fewest_goals_scored(team_id)
+    goals = 0
+    team_set = game_teams_by_team
+
+    team_set.each do |team, games|
+      if team_id == team
+        goals = games.min_by do |game|
+          game.goals
+        end.goals
+      end
+    end
+
+    goals
+  end
+
 end

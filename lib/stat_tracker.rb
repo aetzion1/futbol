@@ -122,33 +122,11 @@ class StatTracker
   end
 
   def most_goals_scored(team_id)
-    goals = 0
-    team_set = @game_teams_repo.game_teams_by_team
-    
-    team_set.each do |team, games|
-      if team_id == team
-        goals = games.max_by do |game|
-          game.goals
-        end.goals
-      end
-    end
-
-    goals
+    @game_teams_repo.most_goals_scored(team_id)
   end
 
   def fewest_goals_scored(team_id)
-    goals = 0
-    team_set = @game_teams_repo.game_teams_by_team
-
-    team_set.each do |team, games|
-      if team_id == team
-        goals = games.min_by do |game|
-          game.goals
-        end.goals
-      end
-    end
-
-    goals
+    @game_teams_repo.fewest_goals_scored(team_id)
   end
 
   def favorite_opponent(team_id)
