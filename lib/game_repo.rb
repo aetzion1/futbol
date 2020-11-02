@@ -140,6 +140,14 @@ class GameRepo
     win_percentage.key(win_percentage.values.max)
   end
 
+  def worst_season(team_id)
+    win_percentage = {}
+
+    wins_per_season_by_team(team_id).each do |season, win_number|
+      win_percentage[season] = ((win_number.to_f / ((total_games_per_team_home(team_id).count) + (total_games_per_team_away(team_id).count))) * 100).round(2)
+    end
+    win_percentage.key(win_percentage.values.min)
+  end
 
 
 end
