@@ -1,24 +1,24 @@
 require './test/test_helper'
 
-class GameRepoTest < Minitest::Test
+class GamesRepoTest < Minitest::Test
   def setup
     @games_path = './dummy_data/games_dummy_2.csv'
-    @games_repo_test = GameRepo.new(@games_path)
+    @games_repo_test = GamesRepo.new(@games_path)
   end
 
   def test_make_games
-    assert_instance_of Game, @games_repo_test.make_games(@games_path)[0]
-    assert_instance_of Game, @games_repo_test.make_games(@games_path)[-1]
+    assert_instance_of Games, @games_repo_test.make_games(@games_path)[0]
+    assert_instance_of Games, @games_repo_test.make_games(@games_path)[-1]
   end
 
   def test_it_can_return_total_away_games
-    assert_instance_of Game, @games_repo_test.total_games_per_team_away("3")[0]
-    assert_instance_of Game, @games_repo_test.total_games_per_team_away("3")[-1]
+    assert_instance_of Games, @games_repo_test.total_games_per_team_away("3")[0]
+    assert_instance_of Games, @games_repo_test.total_games_per_team_away("3")[-1]
   end
 
   def test_it_can_return_total_home_games
-    assert_instance_of Game, @games_repo_test.total_games_per_team_home("6")[0]
-    assert_instance_of Game, @games_repo_test.total_games_per_team_home("6")[-1]
+    assert_instance_of Games, @games_repo_test.total_games_per_team_home("6")[0]
+    assert_instance_of Games, @games_repo_test.total_games_per_team_home("6")[-1]
   end
 
   def test_it_can_return_season_by_game_id

@@ -31,5 +31,5 @@ class GameTeams
         @faceOffWinPercentage = row[:faceOffWinPercentage].to_f
         @giveaways = row[:giveaways].to_i
         @takeaways = row[:takeaways].to_i
-     end
+    end
 end

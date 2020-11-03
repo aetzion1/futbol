@@ -1,7 +1,7 @@
 require './test/test_helper'
-require './lib/game'
+require './lib/games'
 
-class GameTest < Minitest::Test
+class GamesTest < Minitest::Test
 
   def setup
     @row = Hash.new
@@ -20,19 +20,18 @@ class GameTest < Minitest::Test
   end
 
   def test_it_exists
-    game = Game.new(@row)
-    assert_instance_of Game, game
+    game = Games.new(@row)
+    assert_instance_of Games, game
   end
 
   def test_it_calculates_winner
-    home_team = mock("Home Team Game")
+    home_team = mock
     home_team.expects(:home_goals).returns(3)
     home_team.expects(:away_goals).returns(2)
     # away_team = mock("Away Team Game")
     # away_team.expected(:away_goals).returns(2)
 
     assert_equal :home, home_team.calculate_winner
-
   end
 
 end

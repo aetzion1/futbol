@@ -179,14 +179,14 @@ class TestStatTracker < Minitest::Test
 
   def test_it_can_return_total_games_per_team_away
     # skip
-    assert_instance_of Game, @stat_tracker.total_games_per_team_away("6")[0]
-    assert_instance_of Game, @stat_tracker.total_games_per_team_away("6")[-1]
+    assert_instance_of Games, @stat_tracker.total_games_per_team_away("6")[0]
+    assert_instance_of Games, @stat_tracker.total_games_per_team_away("6")[-1]
   end
 
   def test_it_can_return_total_games_per_team_home
     # skip
-    assert_instance_of Game, @stat_tracker.total_games_per_team_home("6")[0]
-    assert_instance_of Game, @stat_tracker.total_games_per_team_home("6")[-1]
+    assert_instance_of Games, @stat_tracker.total_games_per_team_home("6")[0]
+    assert_instance_of Games, @stat_tracker.total_games_per_team_home("6")[-1]
   end
 
   def test_it_can_return_games_per_season_by_team

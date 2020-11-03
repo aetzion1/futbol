@@ -144,8 +144,8 @@ class GamesRepo
       numerator = win_number.to_f 
       l_value = total_games_per_team_home(team_id).count
       r_value = total_games_per_team_away(team_id).count
-      denominator = (l_value + r_value) * 100
-      win_percentage[season] = (numerator / denominator).round(2)
+      denominator = (l_value + r_value)
+      win_percentage[season] = ((numerator / denominator) * 100).round(2)
     end
 
     win_percentage.key(win_percentage.values.max)
@@ -158,8 +158,8 @@ class GamesRepo
       numerator = win_number.to_f 
       l_value = total_games_per_team_home(team_id).count
       r_value = total_games_per_team_away(team_id).count
-      denominator = (l_value + r_value) * 100
-      win_percentage[season] = (numerator / denominator).round(2)
+      denominator = (l_value + r_value)
+      win_percentage[season] = ((numerator / denominator) * 100).round(2)
     end
 
     win_percentage.key(win_percentage.values.min)
