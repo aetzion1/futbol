@@ -48,4 +48,9 @@ class GameTeamsRepoTest < Minitest::Test
     assert_equal "Utah Royals FC", @game_teams_repo_test.lowest_scoring_home_team
   end
 
+  def test_conversion_percent
+    assert_equal "3", @game_teams_repo_test.team_conversion_percent("20122013").keys.first
+    assert_equal 0.25396825396825395, @game_teams_repo_test.team_conversion_percent("20122013").values.first
+  end
+
 end  
