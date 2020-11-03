@@ -147,18 +147,6 @@ class StatTracker
     @games_repo.game_ids_by_season(season_id)
   end
 
-  def game_team_by_season(season_id)
-    @game_teams_repo.game_team_by_season(season_id)
-  end
-
-  def games_by_team_id(season_id)
-    @game_teams_repo.games_by_team_id(season_id)
-  end
-
-  def team_conversion_percent(season_id)
-   @game_teams_repo.team_conversion_percent(season_id)
-  end
-  
   def total_games_per_team_away(team_id)
     @games_repo.total_games_per_team_away(team_id)
   end
