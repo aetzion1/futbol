@@ -21,7 +21,6 @@ class GameTeamsTest < MiniTest::Test
         assert_equal 8, @game_teams.first.shots
         assert_equal 33, @game_teams.first.tackles
         assert_equal 14, @game_teams.first.pim
-        # require 'pry';binding.pry
         assert_equal 5, @game_teams.first.powerplayopportunities
         assert_equal 1, @game_teams.first.powerplaygoals
         assert_equal 37.2, @game_teams.first.faceoffwinpercentage
