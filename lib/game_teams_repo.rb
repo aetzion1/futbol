@@ -67,10 +67,6 @@ class GameTeamsRepo
     win_rate.key(win_rate.values.reject{|x| x.nan?}.min)
   end
 
-  def game_ids_by_season(season_id)
-    @stat_tracker.game_team_by_season(season_id)
-  end
-
   def game_team_by_season(season_id)
     game_ids = @stat_tracker.season_game_ids
     @game_teams.find_all do |row|
