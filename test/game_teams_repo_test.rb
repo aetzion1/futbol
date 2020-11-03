@@ -3,7 +3,7 @@ require './test/test_helper'
 class GameTeamsRepoTest < Minitest::Test
   def setup
     @game_teams_path = './data/game_teams.csv'
-    @game_teams_repo_test = GameTeamsRepo.new(@game_teams_path)
+    @game_teams_repo_test = GameTeamsRepo.new(@game_teams_path, stat_tracker)
     @teams_path = './data/teams.csv'
     @teams = TeamsRepo.new(@teams_path)
   end

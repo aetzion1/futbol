@@ -10,7 +10,7 @@ class StatTracker
     @teams_path = locations[:teams]
     @game_teams_path = locations[:game_teams]
     @games_repo = GameRepo.new(@games_path)
-    @game_teams_repo = GameTeamsRepo.new(@game_teams_path)
+    @game_teams_repo = GameTeamsRepo.new(@game_teams_path, self)
     @teams_repo = TeamsRepo.new(@teams_path)
   end
 
@@ -55,92 +55,45 @@ class StatTracker
   end
 
   def best_offense
-    best_team = @game_teams_repo.best_offense 
-    @teams_repo.team_name(best_team)
+    @game_teams_repo.best_offense
   end
 
   def worst_offense
-    worst_team = @game_teams_repo.worst_offense
-    match = @teams_repo.all_teams.find do |team|
-      team.team_id == worst_team
-    end
-    match.teamname
+    @game_teams_repo.worst_offense
   end
 
   def highest_scoring_visitor
-    best_visit = @game_teams_repo.highest_scoring_visitor
-    match = @teams_repo.all_teams.find do |team|
-      team.team_id == best_visit
-    end
-    match.teamname
+    @game_teams_repo.highest_scoring_visitor
   end
 
   def highest_scoring_home_team
-    best_home = @game_teams_repo.highest_scoring_home_team
-    match = @teams_repo.all_teams.find do |team|
-      team.team_id == best_home
-    end
-    match.teamname
+    @game_teams_repo.highest_scoring_home_team
   end
 
   def lowest_scoring_visitor
-    worst_visit = @game_teams_repo.lowest_scoring_visitor
-    @teams_repo.all_teams.find do |team|
-      team.team_id == worst_visit
-    end.teamname
+    @game_teams_repo.lowest_scoring_visitor
   end
 
   def lowest_scoring_home_team
-    worst_home = @game_teams_repo.lowest_scoring_home_team
-    @teams_repo.all_teams.find do |team|
-      team.team_id == worst_home
-    end.teamname
+    @game_teams_repo.lowest_scoring_home_team
   end
 
   def winningest_coach(season_id)
-    game_set = @games_repo.game_ids_by_season(season_id)
-    game_teams_set = @game_teams_repo.game_teams_by_coach
-
-    win_rate = {}
-    game_teams_set.map do |coach, games|
-      win_rate[coach] = ((games.count {|game| (game.result == "WIN") && game_set.include?(game.game_id)}).to_f / (games.count {|game| game_set.include?(game.game_id)})).round(2)
-    end
-
-    win_rate.key(win_rate.values.reject{|x| x.nan?}.max)
+    @game_teams_repo.winningest_coach(season_id)
   end
 
   def worst_coach(season_id)
-    game_set = @games_repo.game_ids_by_season(season_id)
-    game_teams_set = @game_teams_repo.game_teams_by_coach
-
-    win_rate = {}
-    game_teams_set.map do |coach, games|
-      win_rate[coach] = ((games.count {|game| (game.result == "WIN") && game_set.include?(game.game_id)}).to_f / (games.count {|game| game_set.include?(game.game_id)})).round(2)
-    end
-    
-    win_rate.key(win_rate.values.reject{|x| x.nan?}.min)
+    @game_teams_repo.worst_coach(season_id)
   end
 
   #MOST AND LEAST ACCURATE - DISCUSS WITH TEAM
   def most_accurate_team(season_id)
-    ratio = team_conversion_percent(season_id).max_by do |team, ratio|
-      ratio
-    end
-    @teams_repo.all_teams.map do |team|
-      return team.teamname if team.team_id == ratio[0]
-    end
+    @game_teams_repo.most_accurate_team(season_id)
   end
 
   def least_accurate_team(season_id)
-    ratio = team_conversion_percent(season_id).min_by do |team, ratio|
-      ratio
-    end
-
-    @teams_repo.all_teams.map do |team|
-      return team.teamname if team.team_id == ratio[0]
-    end
+    @game_teams_repo.least_accurate_team(season_id)
   end
-
 
   def most_tackles(season_id)
     team_tackles = {}
@@ -289,32 +242,28 @@ class StatTracker
 
 
   #### HELPER METHODS TO DISCUSS ######
+  def season_game_ids
+    @games_repo.season_game_ids
+  end
+  
+  def team_name(id)
+    @teams_repo.team_name(id)
+  end
+
+  def game_ids_by_season(season_id)
+    @games_repo.game_ids_by_season(season_id)
+  end
 
   def game_team_by_season(season_id)
-    game_ids = @games_repo.season_game_ids
-    @game_teams_repo.game_team_by_season(game_ids, season_id)
+    @game_teams_repo.game_team_by_season(season_id)
   end
 
   def games_by_team_id(season_id)
-    game_by_id = game_team_by_season(season_id).group_by do |game|
-      game.team_id
-    end
-    game_by_id
+    @game_teams_repo.games_by_team_id(season_id)
   end
 
   def team_conversion_percent(season_id)
-    team_ratio = {}
-    season_id_games = games_by_team_id(season_id)
-    season_id_games.map do |team, games|
-      goals = 0.0
-      shots = 0.0
-      games.map do |game|
-        goals += game.goals
-        shots += game.shots
-      end
-      team_ratio[team] = goals / shots
-    end
-    team_ratio
+   @game_teams_repo.team_conversion_percent(season_id)
   end
   
   def total_games_per_team_away(team_id)
