@@ -1,4 +1,4 @@
-require './lib/game_teams'
+require_relative './game_teams'
 
 class GameTeamsRepo
 

@@ -1,4 +1,4 @@
-require './lib/games'
+require_relative './games'
 
 class GamesRepo
   def initialize(games_path)

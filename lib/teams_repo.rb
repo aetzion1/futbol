@@ -1,4 +1,4 @@
-require './lib/teams'
+require_relative './teams'
 
 class TeamsRepo
     def initialize(teams_path)
