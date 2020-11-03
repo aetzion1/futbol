@@ -110,11 +110,13 @@ class GamesRepo
 
   def average_goals_by_season
     average_goals = {}
+
     games_by_season.map do |season, games|
       numerator = (games.sum {|game| game.away_goals + game.home_goals }).to_f
       denominator = games.count
       average_goals[season] = (numerator / denominator).round(2)
     end
+
     average_goals
   end
 
@@ -131,6 +133,7 @@ class GamesRepo
         wins_by_season[game.season] += 1
       end
     end
+
     wins_by_season
   end
 
@@ -144,6 +147,7 @@ class GamesRepo
       denominator = (l_value + r_value) * 100
       win_percentage[season] = (numerator / denominator).round(2)
     end
+
     win_percentage.key(win_percentage.values.max)
   end
 
@@ -157,6 +161,7 @@ class GamesRepo
       denominator = (l_value + r_value) * 100
       win_percentage[season] = (numerator / denominator).round(2)
     end
+
     win_percentage.key(win_percentage.values.min)
   end
 
@@ -180,13 +185,13 @@ class GamesRepo
   end
 
   def games_per_season_by_team(team_id)
-
     games_by_season = Hash.new(0)
     total_games_per_team = total_games_per_team_away(team_id) + total_games_per_team_home(team_id)
 
     total_games_per_team.each do |game|
       games_by_season[game.season] += 1
     end
+
     games_by_season
   end
 
