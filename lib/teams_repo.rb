@@ -1,3 +1,5 @@
+require './lib/teams'
+
 class TeamsRepo
     def initialize(teams_path)
       @teams = make_teams(teams_path)
@@ -9,10 +11,6 @@ class TeamsRepo
         teams << Teams.new(row)
       end
       teams
-    end
-
-    def all_teams
-      @teams
     end
 
     def team_name(id) 
