@@ -64,9 +64,8 @@ class GameTeamsRepo
     win_rate.key(win_rate.values.reject{|x| x.nan?}.min)
   end
 
-  def game_ids_by_season
-    game_id = @stat_tracker.game_ids_by_season(season_id)
-    game_team_by_season(game_id, season_id)
+  def game_ids_by_season(season_id)
+    @stat_tracker.game_team_by_season(season_id)
   end
 
   def game_team_by_season(season_id)
@@ -177,6 +176,98 @@ class GameTeamsRepo
     end
     worst_home = average_goals.key(average_goals.values.min)
     @stat_tracker.team_name(worst_home)
+  end
+
+  def most_tackles(season_id)
+    team_tackles = {}
+    games_by_team_id(season_id).map do |team, games|
+      tackles = 0
+      games.map do |game|
+        tackles += game.tackles
+      end
+      team_tackles[team] = tackles
+    end
+    @stat_tracker.team_name(team_tackles.key(team_tackles.values.max))
+  end
+
+  def fewest_tackles(season_id)
+    team_tackles = {}
+    games_by_team_id(season_id).map do |team, games|
+      tackles = 0
+      games.map do |game|
+        tackles += game.tackles
+      end
+      team_tackles[team] = tackles
+    end
+
+    @stat_tracker.team_name(team_tackles.key(team_tackles.values.min))
+  end
+
+  def most_goals_scored(team_id)
+    goals = 0
+    team_set = game_teams_by_team
+
+    team_set.each do |team, games|
+      if team_id == team
+        goals = games.max_by do |game|
+          game.goals
+        end.goals
+      end
+    end
+
+    goals
+  end
+
+  def fewest_goals_scored(team_id)
+    goals = 0
+    team_set = game_teams_by_team
+
+    team_set.each do |team, games|
+      if team_id == team
+        goals = games.min_by do |game|
+          game.goals
+        end.goals
+      end
+    end
+
+    goals
+  end
+
+  def favorite_opponent(team_id)
+    game_set = game_teams_by_team_id[team_id]
+    team_set = game_teams_by_team
+    win_rate = {}
+
+    team_set.map do |team, games|
+      games_won = 0.0
+      games_total = 0.0
+      games.map do |game|
+        games_won += 1 if game.result == "WIN" && game_set.include?(game.game_id)
+        games_total += 1 if game_set.include?(game.game_id)
+      end
+      win_rate[team] = games_won / games_total
+    end
+    fav = win_rate.key(win_rate.values.min)
+    @stat_tracker.team_name(fav)
+  end
+
+  def rival(team_id)
+    game_set = game_teams_by_team_id[team_id]
+    team_set = game_teams_by_team
+    win_rate = {}
+
+    team_set.map do |team, games|
+      games_won = 0.0
+      games_total = 0.0
+      games.map do |game|
+        games_won += 1 if game.result == "WIN" && game_set.include?(game.game_id)
+        games_total += 1 if game_set.include?(game.game_id)
+      end
+      win_rate[team] = games_won / games_total
+    end
+
+    fav = win_rate.key(win_rate.values.max)
+    @stat_tracker.team_name(fav)
   end
 
 end
