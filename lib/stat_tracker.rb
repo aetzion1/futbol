@@ -3,9 +3,7 @@ require_relative './games_repo'
 require_relative './teams_repo'
 require_relative './game_teams_repo'
 
-
 class StatTracker
-
   def initialize(locations)
     @games_path = locations[:games]
     @teams_path = locations[:teams]
