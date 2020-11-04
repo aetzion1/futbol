@@ -20,6 +20,14 @@ class GameTeamsRepoHelper
           game.team_id
         end
     end
+
+    def games_teams_by_team_id(arg_id)
+       test = []
+        @game_teams.each do |game|
+            test << game unless game.team_id != arg_id
+        end
+        test
+    end
   
     def game_teams_by_hoa(hoa_state)
       if hoa_state == "away"
@@ -65,4 +73,14 @@ class GameTeamsRepoHelper
         game_ids[season_id].include?(row.game_id)
       end
     end
+
+    def win_rate(game_set, game_teams_set)
+        winrate = {}
+        game_teams_set.map do |coach, games|
+          numerator = (games.count {|game| (game.result == "WIN") && game_set.include?(game.game_id)}).to_f
+          denominator = games.count {|game| game_set.include?(game.game_id)}
+          winrate[coach] = (numerator / denominator).round(2)
+        end
+        winrate
+      end  
 end
