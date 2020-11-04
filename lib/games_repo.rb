@@ -72,24 +72,24 @@ class GamesRepo
     min_score_game.home_goals + min_score_game.away_goals
   end
 
-  def percentage_home_wins
-    home_wins = @games.count do |game|
-      game.calculate_winner == :home
+  def calc_wins(home_or_away)
+    @games.count do |game|
+      game.calculate_winner == home_or_away
     end
+  end
+
+  def percentage_home_wins
+    home_wins = calc_wins(:home)
     (home_wins.to_f / @games.count).round(2)
   end
 
   def percentage_visitor_wins
-    visitor_wins = @games.count do |game|
-      game.calculate_winner == :away
-    end
+    visitor_wins = calc_wins(:away)
     (visitor_wins.to_f / @games.count).round(2)
   end
 
   def percentage_ties
-    ties = @games.count do |game|
-      game.calculate_winner == :tie
-    end
+    ties = calc_wins(:tie)
     (ties.to_f / @games.count).round(2)
   end
 
@@ -133,13 +133,11 @@ class GamesRepo
         wins_by_season[game.season] += 1
       end
     end
-
     wins_by_season
   end
 
-  def best_season(team_id)
+  def win_perc(team_id)
     win_percentage = {}
-
     wins_per_season_by_team(team_id).each do |season, win_number|
       numerator = win_number.to_f 
       l_value = total_games_per_team_home(team_id).count
@@ -147,22 +145,15 @@ class GamesRepo
       denominator = (l_value + r_value)
       win_percentage[season] = ((numerator / denominator) * 100).round(2)
     end
+    win_percentage
+  end
 
-    win_percentage.key(win_percentage.values.max)
+  def best_season(team_id)
+    win_perc(team_id).key(win_perc(team_id).values.max)
   end
 
   def worst_season(team_id)
-    win_percentage = {}
-
-    wins_per_season_by_team(team_id).each do |season, win_number|
-      numerator = win_number.to_f 
-      l_value = total_games_per_team_home(team_id).count
-      r_value = total_games_per_team_away(team_id).count
-      denominator = (l_value + r_value)
-      win_percentage[season] = ((numerator / denominator) * 100).round(2)
-    end
-
-    win_percentage.key(win_percentage.values.min)
+    win_perc(team_id).key(win_perc(team_id).values.min)
   end
 
   def average_win_percentage(team_id)
@@ -187,11 +178,9 @@ class GamesRepo
   def games_per_season_by_team(team_id)
     games_by_season = Hash.new(0)
     total_games_per_team = total_games_per_team_away(team_id) + total_games_per_team_home(team_id)
-
     total_games_per_team.each do |game|
       games_by_season[game.season] += 1
     end
-
     games_by_season
   end
 
