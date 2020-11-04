@@ -1,82 +1,72 @@
 require_relative './game_teams'
+require_relative './game_teams_repo_helper'
 
 class GameTeamsRepo
 
   def initialize(game_teams_path, stat_tracker)
-    @game_teams = make_game_teams(game_teams_path)
+    @game_teams = GameTeamsRepoHelper.new(game_teams_path, self)
     @stat_tracker = stat_tracker
+    #@helper = GameTeamsRepoHelper.new(@game_teams_path)
   end
   
-  def make_game_teams(game_teams_path)
-    game_teams = []
-    CSV.foreach(game_teams_path, headers: true, header_converters: :symbol) do |row|
-      game_teams << GameTeams.new(row)
-    end
-    game_teams
-  end
-
-  def game_teams_by_team
-      @game_teams.group_by do |game|
-        game.team_id
-      end
-  end
-
-  def game_teams_by_hoa(hoa_state)
-    if hoa_state == "away"
-      @game_teams.group_by do |game|
-        game.team_id unless game.hoa == "home"
-      end
-    else hoa_state == "home"
-      @game_teams.group_by do |game|
-        game.team_id unless game.hoa == "away"
-      end
-    end
-  end
-
-  # def game_teams_by_away
-  #   @game_teams.group_by do |game|
-  #     game.team_id unless game.hoa == "home"
+  # def make_game_teams(game_teams_path)
+  #   game_teams = []
+  #   CSV.foreach(game_teams_path, headers: true, header_converters: :symbol) do |row|
+  #     game_teams << GameTeams.new(row)
   #   end
+  #   game_teams
   # end
-  
-  # def game_teams_by_home
-  #   @game_teams.group_by do |game|
-  #     game.team_id unless game.hoa == "away"
+
+  # def game_teams_by_team
+  #     @game_teams.group_by do |game|
+  #       game.team_id
+  #     end
+  # end
+
+  # def game_teams_by_hoa(hoa_state)
+  #   if hoa_state == "away"
+  #     @game_teams.group_by do |game|
+  #       game.team_id unless game.hoa == "home"
+  #     end
+  #   else hoa_state == "home"
+  #     @game_teams.group_by do |game|
+  #       game.team_id unless game.hoa == "away"
+  #     end
   #   end
   # end
 
-  def game_teams_by_coach
-    @game_teams.group_by do |game|
-      game.head_coach
-    end
-  end
+  # def game_teams_by_coach
+  #   @game_teams.group_by do |game|
+  #     game.head_coach
+  #   end
+  # end
 
-  def games_by_team_id(season_id)
-    game_by_id = game_team_by_season(season_id).group_by do |game|
-      game.team_id
-    end
-    game_by_id
-  end
+  # def games_by_team_id(season_id)
+  #   game_by_id = game_team_by_season(season_id).group_by do |game|
+  #     game.team_id
+  #   end
+  #   game_by_id
+  # end
 
-  def game_teams_by_team_id
-    game_set = {}
-    team_set = game_teams_by_team
+  # def game_teams_by_team_id
+  #   game_set = {}
+  #   team_set = game_teams_by_team
 
-    team_set.map do |team, games|
-      game_set[team] = games.map do |game|
-        game.game_id
-      end
-    end
+  #   team_set.map do |team, games|
+  #     game_set[team] = games.map do |game|
+  #       game.game_id
+  #     end
+  #   end
 
-    game_set
-  end
+  #   game_set
+  # end
 
-  def game_team_by_season(season_id)
-    game_ids = @stat_tracker.season_game_ids
-    @game_teams.find_all do |row|
-      game_ids[season_id].include?(row.game_id)
-    end
-  end
+  # def game_team_by_season(season_id)
+  #   game_ids = @stat_tracker.season_game_ids
+  #   @game_teams.find_all do |row|
+  #     game_ids[season_id].include?(row.game_id)
+  #   end
+  # end
 
   def win_rate(game_set, game_teams_set)
     winrate = {}
@@ -90,20 +80,20 @@ class GameTeamsRepo
 
   def winningest_coach(season_id)
     game_set = @stat_tracker.game_ids_by_season(season_id)
-    game_teams_set = game_teams_by_coach
+    game_teams_set = @game_teams.game_teams_by_coach
     win_rate(game_set, game_teams_set).key(win_rate(game_set, game_teams_set).values.reject{|x| x.nan?}.max)
   end
 
   def worst_coach(season_id)
     game_set = @stat_tracker.game_ids_by_season(season_id)
-    game_teams_set = game_teams_by_coach
+    game_teams_set = @game_teams.game_teams_by_coach
     win_rate(game_set, game_teams_set).key(win_rate(game_set, game_teams_set).values.reject{|x| x.nan?}.min)
   end
 
   
   def team_conversion_percent(season_id)
     team_ratio = {}
-    season_id_games = games_by_team_id(season_id)
+    season_id_games = @game_teams.games_by_team_id(season_id)
 
     season_id_games.map do |team, games|
       goals = 0.0
@@ -139,7 +129,7 @@ class GameTeamsRepo
   end
 
   def goals_sum
-    test = game_teams_by_team
+    test = @game_teams.game_teams_by_team
     average_goals = {}
     test.map do |team , games|
       average_goals[team] = (games.sum {|game|  game.goals}).to_f / games.count
@@ -158,7 +148,7 @@ class GameTeamsRepo
   end
 
   def games_sum(hoa_state)
-    test = game_teams_by_hoa(hoa_state)
+    test = @game_teams.game_teams_by_hoa(hoa_state)
     average_goals = {}
 
     test.map do |team , games|
@@ -190,7 +180,7 @@ class GameTeamsRepo
   def tackles_for_team(season_id)
     team_tackles = {}
     
-    test = games_by_team_id(season_id)
+    test = @game_teams.games_by_team_id(season_id)
     test.map do |team, games|
       tackles = 0
       games.map do |game|
@@ -211,7 +201,7 @@ class GameTeamsRepo
 
   def most_goals_scored(team_id)
     goals = 0
-    team_set = game_teams_by_team(team_id)
+    team_set = @game_teams.game_teams_by_team(team_id)
 
     team_set.each do |team, games|
       if team_id == team
@@ -226,7 +216,7 @@ class GameTeamsRepo
 
   def fewest_goals_scored(team_id)
     goals = 0
-    team_set = game_teams_by_team(team_id)
+    team_set = @game_teams.game_teams_by_team(team_id)
 
     team_set.each do |team, games|
       if team_id == team
@@ -239,9 +229,9 @@ class GameTeamsRepo
     goals
   end
 
-  def favorite_opponent(team_id)
-    game_set = game_teams_by_team_id[team_id]
-    team_set = game_teams_by_team
+  def win_rate_calc(team_id)
+    game_set = @game_teams.game_teams_by_team_id[team_id]
+    team_set = @game_teams.game_teams_by_team
     win_rate = {}
 
     team_set.map do |team, games|
@@ -253,28 +243,17 @@ class GameTeamsRepo
       end
       win_rate[team] = games_won / games_total
     end
-    
-    fav = win_rate.key(win_rate.values.min)
+    win_rate
+  end
+
+  def favorite_opponent(team_id)
+    fav = win_rate_calc(team_id).key(win_rate_calc(team_id).values.min)
     @stat_tracker.team_name(fav)
   end
 
   def rival(team_id)
-    game_set = game_teams_by_team_id[team_id]
-    team_set = game_teams_by_team
-    win_rate = {}
-
-    team_set.map do |team, games|
-      games_won = 0.0
-      games_total = 0.0
-      games.map do |game|
-        games_won += 1 if game.result == "WIN" && game_set.include?(game.game_id)
-        games_total += 1 if game_set.include?(game.game_id)
-      end
-      win_rate[team] = games_won / games_total
-    end
-
-    fav = win_rate.key(win_rate.values.max)
-    @stat_tracker.team_name(fav)
+    rival = win_rate_calc(team_id).key(win_rate_calc(team_id).values.max)
+    @stat_tracker.team_name(rival)
   end
 
 end
