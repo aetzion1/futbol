@@ -9,9 +9,9 @@ class GameTeams
                 :shots,
                 :tackles,
                 :pim,
-                :powerPlayOpportunities,
-                :powerPlayGoals,
-                :faceOffWinPercentage,
+                :powerplayopportunities,
+                :powerplaygoals,
+                :faceoffwinpercentage,
                 :giveaways,
                 :takeaways
 
@@ -26,10 +26,10 @@ class GameTeams
         @shots = row[:shots].to_i
         @tackles = row[:tackles].to_i
         @pim = row[:pim].to_i
-        @powerPlayOpportunities = row[:powerPlayOpportunities].to_i
-        @powerPlayGoals = row[:powerPlayGoals].to_i
-        @faceOffWinPercentage = row[:faceOffWinPercentage].to_f
+        @powerplayopportunities = row[:powerplayopportunities].to_i
+        @powerplaygoals = row[:powerplaygoals].to_i
+        @faceoffwinpercentage = row[:faceoffwinpercentage].to_f
         @giveaways = row[:giveaways].to_i
         @takeaways = row[:takeaways].to_i
-     end
+    end
 end

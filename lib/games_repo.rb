@@ -1,4 +1,6 @@
-class GameRepo
+require_relative './games'
+
+class GamesRepo
   def initialize(games_path)
     @games = make_games(games_path)
   end
@@ -6,7 +8,7 @@ class GameRepo
   def make_games(games_path)
     games = []
     CSV.foreach(games_path, headers: true, header_converters: :symbol) do |row|
-      games << Game.new(row)
+      games << Games.new(row)
     end
     games
   end
@@ -91,7 +93,6 @@ class GameRepo
     (ties.to_f / @games.count).round(2)
   end
 
-
   def count_of_games_by_season
     count = {}
     games_by_season.map do |season, games|
@@ -109,9 +110,13 @@ class GameRepo
 
   def average_goals_by_season
     average_goals = {}
+
     games_by_season.map do |season, games|
-      average_goals[season] = ((games.sum { |game| game.away_goals + game.home_goals }).to_f / games.count).round(2)
+      numerator = (games.sum {|game| game.away_goals + game.home_goals }).to_f
+      denominator = games.count
+      average_goals[season] = (numerator / denominator).round(2)
     end
+
     average_goals
   end
 
@@ -128,6 +133,7 @@ class GameRepo
         wins_by_season[game.season] += 1
       end
     end
+
     wins_by_season
   end
 
@@ -135,8 +141,13 @@ class GameRepo
     win_percentage = {}
 
     wins_per_season_by_team(team_id).each do |season, win_number|
-      win_percentage[season] = ((win_number.to_f / ((total_games_per_team_home(team_id).count) + (total_games_per_team_away(team_id).count))) * 100).round(2)
+      numerator = win_number.to_f 
+      l_value = total_games_per_team_home(team_id).count
+      r_value = total_games_per_team_away(team_id).count
+      denominator = (l_value + r_value)
+      win_percentage[season] = ((numerator / denominator) * 100).round(2)
     end
+
     win_percentage.key(win_percentage.values.max)
   end
 
@@ -144,8 +155,13 @@ class GameRepo
     win_percentage = {}
 
     wins_per_season_by_team(team_id).each do |season, win_number|
-      win_percentage[season] = ((win_number.to_f / ((total_games_per_team_home(team_id).count) + (total_games_per_team_away(team_id).count))) * 100).round(2)
+      numerator = win_number.to_f 
+      l_value = total_games_per_team_home(team_id).count
+      r_value = total_games_per_team_away(team_id).count
+      denominator = (l_value + r_value)
+      win_percentage[season] = ((numerator / denominator) * 100).round(2)
     end
+
     win_percentage.key(win_percentage.values.min)
   end
 
@@ -164,17 +180,18 @@ class GameRepo
         wins += 1
       end
     end
+
     (wins.to_f / total_game_count).round(2)
   end
 
   def games_per_season_by_team(team_id)
-
     games_by_season = Hash.new(0)
     total_games_per_team = total_games_per_team_away(team_id) + total_games_per_team_home(team_id)
 
     total_games_per_team.each do |game|
       games_by_season[game.season] += 1
     end
+
     games_by_season
   end
 
