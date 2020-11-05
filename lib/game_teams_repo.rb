@@ -33,17 +33,17 @@ class GameTeamsRepo
     end
   end
 
-  # def game_teams_by_away
-  #   @game_teams.group_by do |game|
-  #     game.team_id unless game.hoa == "home"
-  #   end
-  # end
+  def game_teams_by_away
+    @game_teams.group_by do |game|
+      game.team_id unless game.hoa == "home"
+    end
+  end
   
-  # def game_teams_by_home
-  #   @game_teams.group_by do |game|
-  #     game.team_id unless game.hoa == "away"
-  #   end
-  # end
+  def game_teams_by_home
+    @game_teams.group_by do |game|
+      game.team_id unless game.hoa == "away"
+    end
+  end
 
   def game_teams_by_coach
     @game_teams.group_by do |game|
@@ -211,7 +211,7 @@ class GameTeamsRepo
 
   def most_goals_scored(team_id)
     goals = 0
-    team_set = game_teams_by_team(team_id)
+    team_set = game_teams_by_team
 
     team_set.each do |team, games|
       if team_id == team
@@ -226,7 +226,7 @@ class GameTeamsRepo
 
   def fewest_goals_scored(team_id)
     goals = 0
-    team_set = game_teams_by_team(team_id)
+    team_set = game_teams_by_team
 
     team_set.each do |team, games|
       if team_id == team
