@@ -15,9 +15,11 @@ class TeamsRepo
 
     def team_name(id) 
       @teams.find do |team|
+        binding.pry
         team.team_id == id
       end.teamname
     end
+
 
     def team_info(arg_id)
       queried_team = Hash.new
